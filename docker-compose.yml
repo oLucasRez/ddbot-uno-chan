@@ -3,3 +3,5 @@ services:
   mongo:
     image: mongo
     container_name: 'kawaii-db'
+    ports:
+      - 27017:27017
