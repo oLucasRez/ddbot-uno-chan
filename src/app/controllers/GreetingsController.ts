@@ -12,20 +12,22 @@ class GreetingsController extends Controller {
 
       const [messagePrefix, content] = rawContent?.split(this.DELIMITER) || [];
 
-      if (messagePrefix !== this.PREFIX || content !== "konichiwa") {
+      if (messagePrefix !== this.PREFIX || content !== 'konichiwa') {
         return;
       }
       const phrases = [
-        "senpai",
-        "kun",
-        "san",
-        "sama",
-        "kohai",
-        "dono",
-        "sensei",
-        "chibi"
+        'senpai',
+        'kun',
+        'san',
+        'sama',
+        'kohai',
+        'dono',
+        'sensei',
+        'chibi'
       ];
-      message?.channel.send('Hello ' + phrases[Math.floor(Math.random() * phrases.length)] + ' uwu');
+      message?.channel.send(
+        'Hello ' + phrases[Math.floor(Math.random() * phrases.length)] + ' uwu'
+      );
     }
   };
 
