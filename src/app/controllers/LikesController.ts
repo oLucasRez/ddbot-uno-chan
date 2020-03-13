@@ -12,44 +12,54 @@ class LikesController extends Controller {
 
       const [messagePrefix, content] = rawContent?.split(this.DELIMITER) || [];
 
-      if (messagePrefix !== this.PREFIX || content !== 'likes') {
+      if (messagePrefix !== this.PREFIX || !content.startsWith('likes')) {
         return;
       }
+      console.log(message);
 
-      const phrases = [
-        'ecchi',
-        'gore',
-        'yaoi',
-        'mecha',
-        'shounen',
-        'bishoujo',
-        'shoujo',
-        'hentai',
-        'isekai',
-        'yuri',
-        'slice of life',
-        'boku no piko'
-      ];
-      const plus = [
-        'likes a lot',
-        'really likes',
-        'likes',
-        "doesn't likes",
-        'hates'
-      ];
+      const taggedUser = message?.mentions.users.first();
+      var user = 'Ciro Gomes';
 
-      const user = message?.member?.user.username;
-
-      message?.channel.send(
-        user +
-          ' ' +
-          plus[Math.floor(Math.random() * plus.length)] +
-          ' ' +
-          phrases[Math.floor(Math.random() * phrases.length)] +
-          ' style'
-      );
+      if (!taggedUser) {
+        user = message?.member?.user.username ?? 'Ciro Gomes';
+      } else {
+        user = taggedUser.username;
+      }
+      message?.channel.send(this.phraseLike(user));
     }
   };
+
+  phraseLike(username: string) {
+    const phrases = [
+      'ecchi',
+      'gore',
+      'yaoi',
+      'mecha',
+      'shounen',
+      'bishoujo',
+      'shoujo',
+      'hentai',
+      'isekai',
+      'yuri',
+      'slice of life',
+      'boku no piko'
+    ];
+    const plus = [
+      'likes a lot',
+      'really likes',
+      'likes',
+      "doesn't likes",
+      'hates'
+    ];
+    return (
+      username +
+      ' ' +
+      plus[Math.floor(Math.random() * plus.length)] +
+      ' ' +
+      phrases[Math.floor(Math.random() * phrases.length)] +
+      ' style'
+    );
+  }
 }
 
 export default new LikesController();
