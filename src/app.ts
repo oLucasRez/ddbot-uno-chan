@@ -1,5 +1,5 @@
 import Discord from 'discord.js';
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 
 import listeners from './listeners';
 

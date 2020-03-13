@@ -5,7 +5,7 @@ import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
 
 class GreetingsController extends Controller {
   sayHello: IListener = {
-    socket: SocketEndPoint.Message,
+    socket: SocketEndPoint.MESSAGE,
 
     function: message => {
       const rawContent = message?.content;
@@ -32,7 +32,7 @@ class GreetingsController extends Controller {
   };
 
   helloToServer: IListener = {
-    socket: SocketEndPoint.Ready,
+    socket: SocketEndPoint.READY,
 
     function: () => {
       console.log(`A kawaii hello from Uno-chan!`);

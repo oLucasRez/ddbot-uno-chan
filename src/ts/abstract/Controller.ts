@@ -15,6 +15,6 @@ export default abstract class Controller {
       message.channel.type === 'dm' ||
       !message.content.startsWith(this.PREFIX);
 
-    return messageWasFromBot;
+    return !messageWasFromBot;
   }
 }
