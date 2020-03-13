@@ -7,12 +7,15 @@
     "dev": "ts-node-dev --respawn --transpileOnly src/index.ts"
   },
   "devDependencies": {
+    "@types/mongoose": "^5.7.6",
     "@types/node": "^13.9.0",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.8.3"
   },
   "dependencies": {
     "discord.js": "^12.0.2",
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "merge-images": "^1.2.0",
+    "mongoose": "^5.9.4"
   }
 }

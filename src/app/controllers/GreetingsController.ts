@@ -10,7 +10,7 @@ class GreetingsController extends Controller {
     function: message => {
       const rawContent = message?.content;
 
-      const [messagePrefix, content] = rawContent?.split(this.DELIMITER) || [];
+      const [messagePrefix] = rawContent?.split(this.DELIMITER) || [];
 
       if (messagePrefix !== this.PREFIX || content !== "konichiwa") {
         return;
