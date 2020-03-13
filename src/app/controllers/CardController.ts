@@ -13,7 +13,7 @@ class TestController extends Controller {
   card: IListener = {
     socket: SocketEndPoint.MESSAGE,
 
-    function: message => {
+    function: async message => {
       if (!message || !this.isBotCall(message)) {
         return;
       }
@@ -26,10 +26,10 @@ class TestController extends Controller {
         return;
       }
 
-      const card = CardHelper.loadCard(UnoColor.BLACK, UnoCard.PLUS_FOUR);
+      const card = await CardHelper.loadCard(UnoColor.BLACK, UnoCard.REVERT);
       const attachment = new MessageAttachment(card);
 
-      message.channel.send(attachment);
+      message.channel.send(`<@${message.author.id}> used the card`, attachment);
     }
   };
 }

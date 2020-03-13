@@ -1,25 +1,42 @@
+import jimp from 'jimp';
+import path from 'path';
+
 import { UnoColor } from '../../ts/enum/UnoColor';
 import { UnoCard } from '../../ts/enum/UnoCard';
 
 class CardHelper {
-  private ASSETS_PATH: string;
   private ASSET_EXTENSION: string;
 
   constructor() {
     this.ASSET_EXTENSION = '.png';
-    this.ASSETS_PATH = '../../assets';
   }
 
-  private getAssetPath(assetName: string): string {
-    const assetPath = `${this.ASSETS_PATH}/${assetName + this.ASSET_EXTENSION}`;
+  private _getAssetPath(assetName: string): string {
+    const assetPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'assets',
+      `${assetName + this.ASSET_EXTENSION}`
+    );
+
     return assetPath;
   }
 
-  public loadCard(color: UnoColor, identifier: UnoCard): string {
-    const colorAssetPath = this.getAssetPath(color);
-    const identifierAssetPath = this.getAssetPath(identifier);
+  public async loadCard(color: UnoColor, identifier: UnoCard): Promise<Buffer> {
+    const colorAssetPath = this._getAssetPath(color);
+    const identifierAssetPath = this._getAssetPath(identifier);
 
-    return '';
+    const colorAsset = jimp.read(colorAssetPath);
+    const identifierAsset = jimp.read(identifierAssetPath);
+
+    const assets = await Promise.all([colorAsset, identifierAsset]);
+
+    const [colorPart, identifierPart] = assets;
+
+    const card = colorPart.composite(identifierPart, 0, 0);
+
+    return card.getBufferAsync(jimp.MIME_PNG);
   }
 }
 
