@@ -16,6 +16,12 @@ const GameSchema: Schema = new Schema(
         ref: 'Card'
       }
     ],
+    table: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Card'
+      }
+    ],
     channelId: {
       type: String,
       required: true

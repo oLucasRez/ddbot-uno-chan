@@ -2,6 +2,7 @@ import Controller from '../../ts/abstract/Controller';
 
 import { IListener } from '../../ts/interface/IListener';
 import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
+import CardHelper from '../helpers/CardHelper';
 
 class GreetingsController extends Controller {
   sayHello: IListener = {
@@ -36,6 +37,8 @@ class GreetingsController extends Controller {
 
     function: () => {
       console.log(`A kawaii hello from Uno-chan!`);
+
+      CardHelper.unoStack();
     }
   };
 }
