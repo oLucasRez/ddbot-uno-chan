@@ -38,7 +38,7 @@ export default abstract class Controller {
     return isCallingBotCommand;
   }
 
-  protected getCommandArgs(message: Message | undefined): string[] {
+  protected getCommandArgs(message: Message): string[] {
     const content = message?.content || '';
 
     const [, _commandAndArgs] = content.split(this.DELIMITER);
