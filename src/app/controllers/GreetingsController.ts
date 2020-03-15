@@ -9,23 +9,21 @@ class GreetingsController extends Controller {
     socket: SocketEndPoint.MESSAGE,
 
     function: message => {
-      const rawContent = message?.content;
-
-      const [messagePrefix, content] = rawContent?.split(this.DELIMITER) || [];
-
-      if (messagePrefix !== this.PREFIX || content !== 'konichiwa') {
+      if (!message || !this.isCallingBotCommand(message, 'konichiwa')) {
         return;
       }
+
       const phrases = [
         'senpai',
         'kun',
         'san',
         'sama',
-        'kohai',
+        'kouhai',
         'dono',
         'sensei',
         'chibi'
       ];
+
       message?.channel.send(
         'Hello ' + phrases[Math.floor(Math.random() * phrases.length)] + ' uwu'
       );

@@ -8,14 +8,9 @@ class LikesController extends Controller {
     socket: SocketEndPoint.MESSAGE,
 
     function: message => {
-      const rawContent = message?.content;
-
-      const [messagePrefix, content] = rawContent?.split(this.DELIMITER) || [];
-
-      if (messagePrefix !== this.PREFIX || !content.startsWith('likes')) {
+      if (!message || !this.isCallingBotCommand(message, 'likes')) {
         return;
       }
-      console.log(message);
 
       const taggedUser = message?.mentions.users.first();
       var user = 'Ciro Gomes';
@@ -25,6 +20,7 @@ class LikesController extends Controller {
       } else {
         user = taggedUser.username;
       }
+
       message?.channel.send(this.phraseLike(user));
     }
   };

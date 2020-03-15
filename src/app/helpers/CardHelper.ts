@@ -1,12 +1,8 @@
 import jimp from 'jimp';
 import path from 'path';
 
-import { model } from 'mongoose';
-
 import { UnoColor } from '../../ts/enum/UnoColor';
 import { UnoCard } from '../../ts/enum/UnoCard';
-import { ICard } from '../../ts/interface/ICard';
-import { UnoNumber } from '../../ts/enum/UnoNumber';
 import Card from '../models/Card';
 
 class CardHelper {
@@ -70,17 +66,17 @@ class CardHelper {
     const cards: any[] = [];
     numbers.forEach(number => {
       colors.forEach(color => {
-        cards.push({ color, identifier: number, number: UnoNumber.ONE });
+        cards.push({ color, identifier: number, number: 1 });
         if (number !== UnoCard.ZERO)
-          cards.push({ color, identifier: number, number: UnoNumber.TWO });
+          cards.push({ color, identifier: number, number: 2 });
       });
     });
     blacks.forEach(black => {
       cards.push(
-        { color: UnoColor.BLACK, identifier: black, number: UnoNumber.ONE },
-        { color: UnoColor.BLACK, identifier: black, number: UnoNumber.TWO },
-        { color: UnoColor.BLACK, identifier: black, number: UnoNumber.THREE },
-        { color: UnoColor.BLACK, identifier: black, number: UnoNumber.FOUR }
+        { color: UnoColor.BLACK, identifier: black, number: 1 },
+        { color: UnoColor.BLACK, identifier: black, number: 2 },
+        { color: UnoColor.BLACK, identifier: black, number: 3 },
+        { color: UnoColor.BLACK, identifier: black, number: 4 }
       );
     });
     cards.forEach(card => {
