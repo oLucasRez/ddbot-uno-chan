@@ -1,6 +1,7 @@
 import { MessageAttachment } from 'discord.js';
 
 import Controller from '../../ts/abstract/Controller';
+
 import CardHelper from '../helpers/CardHelper';
 
 import { IListener } from '../../ts/interface/IListener';
@@ -18,7 +19,7 @@ class CardController extends Controller {
         return;
       }
 
-      const card = await CardHelper.loadCard(UnoColor.BLACK, UnoCard.REVERT);
+      const card = await CardHelper.loadCard(UnoColor.BLACK, UnoCard.ZERO);
       const attachment = new MessageAttachment(card);
 
       message?.channel.send(

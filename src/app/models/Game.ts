@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-import { IGame } from '../../ts/interface/IGame';
+import { IGameDocument } from '../../ts/interface/IGame';
 
 const GameSchema: Schema = new Schema(
   {
@@ -30,4 +30,4 @@ const GameSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-export default model<IGame>('Game', GameSchema);
+export default model<IGameDocument>('Game', GameSchema);

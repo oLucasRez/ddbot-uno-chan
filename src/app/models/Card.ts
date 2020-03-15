@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-import { ICard } from '../../ts/interface/ICard';
+import { ICardDocument } from '../../ts/interface/ICard';
 
 const CardSchema: Schema = new Schema(
   {
@@ -22,4 +22,4 @@ const CardSchema: Schema = new Schema(
   }
 );
 
-export default model<ICard>('Card', CardSchema);
+export default model<ICardDocument>('Card', CardSchema);

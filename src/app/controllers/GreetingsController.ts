@@ -35,8 +35,6 @@ class GreetingsController extends Controller {
 
     function: () => {
       console.log(`A kawaii hello from Uno-chan!`);
-
-      CardHelper.unoStack();
     }
   };
 }

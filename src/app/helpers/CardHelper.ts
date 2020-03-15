@@ -3,7 +3,8 @@ import path from 'path';
 
 import { UnoColor } from '../../ts/enum/UnoColor';
 import { UnoCard } from '../../ts/enum/UnoCard';
-import Card from '../models/Card';
+
+import { ICard } from '../../ts/interface/ICard';
 
 class CardHelper {
   private ASSET_EXTENSION: string;
@@ -24,6 +25,13 @@ class CardHelper {
     return assetPath;
   }
 
+  public isSpecialCard(identifier: UnoCard): boolean {
+    const isSpecialCard =
+      identifier === UnoCard.CHANGE || identifier === UnoCard.PLUS_FOUR;
+
+    return isSpecialCard;
+  }
+
   public async loadCard(color: UnoColor, identifier: UnoCard): Promise<Buffer> {
     const colorAssetPath = this._getAssetPath(color);
     const identifierAssetPath = this._getAssetPath(identifier);
@@ -40,49 +48,36 @@ class CardHelper {
     return card.getBufferAsync(jimp.MIME_PNG);
   }
 
-  public unoStack(): void {
-    const numbers = [
-      UnoCard.ZERO,
-      UnoCard.ONE,
-      UnoCard.TWO,
-      UnoCard.THREE,
-      UnoCard.FOUR,
-      UnoCard.FIVE,
-      UnoCard.SIX,
-      UnoCard.SEVEN,
-      UnoCard.EIGHT,
-      UnoCard.NINE,
-      UnoCard.BLOCK,
-      UnoCard.REVERT,
-      UnoCard.PLUS_TWO
-    ];
-    const blacks = [UnoCard.CHANGE, UnoCard.PLUS_FOUR];
-    const colors = [
-      UnoColor.BLUE,
-      UnoColor.GREEN,
-      UnoColor.RED,
-      UnoColor.YELLOW
-    ];
-    const cards: any[] = [];
-    numbers.forEach(number => {
-      colors.forEach(color => {
-        cards.push({ color, identifier: number, number: 1 });
-        if (number !== UnoCard.ZERO)
-          cards.push({ color, identifier: number, number: 2 });
+  public createUnoBasicDeck(): ICard[] {
+    let deck: ICard[] = [];
+
+    Object.values(UnoCard).forEach(identifier => {
+      Object.values(UnoColor).forEach(color => {
+        const cards: ICard[] = [];
+
+        const isSpecialCard = this.isSpecialCard(identifier);
+
+        if (
+          (isSpecialCard && color === UnoColor.BLACK) ||
+          (!isSpecialCard && color !== UnoColor.BLACK)
+        ) {
+          const numberOfCards =
+            identifier === UnoCard.ZERO ? 1 : isSpecialCard ? 4 : 2;
+
+          for (let i = 0; i < numberOfCards; i++) {
+            cards.push({
+              color,
+              identifier,
+              number: i + 1
+            });
+          }
+        }
+
+        deck = deck.concat(cards);
       });
     });
-    blacks.forEach(black => {
-      cards.push(
-        { color: UnoColor.BLACK, identifier: black, number: 1 },
-        { color: UnoColor.BLACK, identifier: black, number: 2 },
-        { color: UnoColor.BLACK, identifier: black, number: 3 },
-        { color: UnoColor.BLACK, identifier: black, number: 4 }
-      );
-    });
-    cards.forEach(card => {
-      Card.create(card);
-    });
-    return;
+
+    return deck;
   }
 }
 
