@@ -10,8 +10,13 @@ const PlayerSchema: Schema = new Schema(
     },
     hand: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'Card'
+        type: [
+          {
+            type: Schema.Types.ObjectId,
+            ref: 'Card'
+          }
+        ],
+        validate: [maxLineSize, `{PATH}: exceeds the limit of 4`]
       }
     ]
   },
@@ -19,5 +24,9 @@ const PlayerSchema: Schema = new Schema(
     timestamps: true
   }
 );
+
+function maxLineSize(value: any[]) {
+  return value.length <= 4;
+}
 
 export default model<IPlayerDocument>('Player', PlayerSchema);

@@ -9,15 +9,12 @@ class App {
 
   private TOKEN: string;
   private CONNECTION_STRING: string;
-  private ALTERNATIVE_CONNECTION_STRING: string;
 
   constructor() {
     this.client = new Discord.Client();
 
     this.TOKEN = process.env.TOKEN ?? '';
     this.CONNECTION_STRING = process.env.CONNECTION_STRING ?? '';
-    this.ALTERNATIVE_CONNECTION_STRING =
-      process.env.ALTERNATIVE_CONNECTION_STRING ?? '';
 
     this._addListeners();
   }

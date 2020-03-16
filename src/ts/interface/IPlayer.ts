@@ -4,10 +4,10 @@ import { ICardDocument, ICard } from './ICard';
 
 export interface IPlayerDocument extends Document {
   tag: string;
-  hand: ICardDocument[];
+  hand: Array<ICardDocument[]>;
 }
 
 export interface IPlayer {
   tag: string;
-  hand: ICard[];
+  hand: Array<ICard[]>;
 }
