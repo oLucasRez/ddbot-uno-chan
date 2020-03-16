@@ -1,18 +1,18 @@
 import { Document } from 'mongoose';
 
 import { IPlayerDocument } from './IPlayer';
-import { ICardDocument, ICard } from './ICard';
+import { IGameCardDocument, IGameCard } from './ICard';
 
 export interface IGameDocument extends Document {
   players: IPlayerDocument[];
-  draw: ICardDocument[];
-  table: ICardDocument[];
+  draw: IGameCardDocument[];
+  table: IGameCardDocument[];
   channelId: string;
 }
 
 export interface IGame {
   players: IPlayerDocument[];
-  draw: ICard[];
-  table: ICard[];
+  draw: IGameCard[];
+  table: IGameCard[];
   channelId: string;
 }

@@ -6,11 +6,19 @@ import { UnoColor } from '../enum/UnoColor';
 export interface ICardDocument extends Document {
   color: UnoColor;
   identifier: UnoCard;
-  number: number;
 }
 
 export interface ICard {
   color: UnoColor;
   identifier: UnoCard;
-  number: number;
+}
+
+export interface IGameCardDocument extends Document {
+  card: ICard;
+  number: Number;
+}
+
+export interface IGameCard {
+  card: ICard;
+  number: Number;
 }

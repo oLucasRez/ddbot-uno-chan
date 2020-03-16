@@ -11,10 +11,6 @@ const CardSchema: Schema = new Schema(
     identifier: {
       type: String,
       required: true
-    },
-    number: {
-      type: Number,
-      required: true
     }
   },
   {

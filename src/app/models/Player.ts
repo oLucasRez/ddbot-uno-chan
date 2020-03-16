@@ -10,13 +10,14 @@ const PlayerSchema: Schema = new Schema(
     },
     hand: [
       {
-        type: [
-          {
-            type: Schema.Types.ObjectId,
-            ref: 'Card'
-          }
-        ],
-        validate: [maxLineSize, `{PATH}: exceeds the limit of 4`]
+        cardId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Card'
+        },
+        cardNumber: {
+          type: Number,
+          required: true
+        }
       }
     ]
   },

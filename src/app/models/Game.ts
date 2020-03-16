@@ -12,14 +12,26 @@ const GameSchema: Schema = new Schema(
     ],
     draw: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'Card'
+        cardId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Card'
+        },
+        cardNumber: {
+          type: Number,
+          required: true
+        }
       }
     ],
     table: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'Card'
+        cardId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Card'
+        },
+        cardNumber: {
+          type: Number,
+          required: true
+        }
       }
     ],
     channelId: {
