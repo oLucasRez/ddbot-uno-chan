@@ -3,6 +3,7 @@ import Controller from '../../ts/abstract/Controller';
 import { IListener } from '../../ts/interface/IListener';
 import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
 import CardHelper from '../helpers/CardHelper';
+import Logger from '../../logger';
 
 class GreetingsController extends Controller {
   sayHello: IListener = {
@@ -34,7 +35,7 @@ class GreetingsController extends Controller {
     socket: SocketEndPoint.READY,
 
     function: () => {
-      console.log(`A kawaii hello from Uno-chan!`);
+      Logger.serverLog(`A kawaii hello from Uno-chan!`);
     }
   };
 }

@@ -19,7 +19,7 @@ class CardController extends Controller {
         return;
       }
 
-      const card = await CardHelper.loadCard(UnoColor.BLACK, UnoCard.ZERO);
+      const card = await CardHelper.loadCard(UnoColor.RED, UnoCard.PLUS_TWO);
       const attachment = new MessageAttachment(card);
 
       message?.channel.send(
