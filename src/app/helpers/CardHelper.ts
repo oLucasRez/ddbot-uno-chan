@@ -48,7 +48,7 @@ class CardHelper {
     return card.getBufferAsync(jimp.MIME_PNG);
   }
 
-  public createUnoBasicDeck(): ICard[] {
+  public createBasicDeck(): ICard[] {
     let deck: ICard[] = [];
 
     Object.values(UnoCard).forEach(identifier => {

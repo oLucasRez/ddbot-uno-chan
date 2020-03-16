@@ -1,13 +1,6 @@
-import { Document } from 'mongoose';
-
-import { IGameCardDocument, IGameCard } from './ICard';
-
-export interface IPlayerDocument extends Document {
-  tag: string;
-  hand: Array<IGameCardDocument[]>;
-}
+import { ICard } from './ICard';
 
 export interface IPlayer {
   tag: string;
-  hand: Array<IGameCard[]>;
+  hand: ICard[];
 }
