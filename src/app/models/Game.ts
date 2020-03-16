@@ -2,6 +2,8 @@ import { Schema, model } from 'mongoose';
 
 import { IGameDocument } from '../../ts/interface/IGame';
 
+import card from '../../ts/types/Card';
+
 const GameSchema: Schema = new Schema(
   {
     players: [
@@ -10,30 +12,8 @@ const GameSchema: Schema = new Schema(
         ref: 'Player'
       }
     ],
-    draw: [
-      {
-        cardId: {
-          type: Schema.Types.ObjectId,
-          ref: 'Card'
-        },
-        cardNumber: {
-          type: Number,
-          required: true
-        }
-      }
-    ],
-    table: [
-      {
-        cardId: {
-          type: Schema.Types.ObjectId,
-          ref: 'Card'
-        },
-        cardNumber: {
-          type: Number,
-          required: true
-        }
-      }
-    ],
+    draw: [card],
+    table: [card],
     channelId: {
       type: String,
       required: true
