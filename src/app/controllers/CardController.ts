@@ -1,8 +1,10 @@
 import { MessageAttachment } from 'discord.js';
 
-import Controller from '../../ts/abstract/Controller';
 import CardHelper from '../helpers/CardHelper';
 
+import Controller from '../../ts/abstract/Controller';
+
+import { ICard } from '../../ts/interface/ICard';
 import { IListener } from '../../ts/interface/IListener';
 
 import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
@@ -14,17 +16,31 @@ class CardController extends Controller {
     socket: SocketEndPoint.MESSAGE,
 
     function: async message => {
-      if (!message || !this.isCallingBotCommand(message, 'loadCard')) {
+      if (!message || !this.isCallingBotCommand(message, 'loadHand')) {
         return;
       }
 
-      const card = await CardHelper.loadCard(UnoColor.BLACK, UnoCard.REVERT);
-      const attachment = new MessageAttachment(card);
+      const hand: ICard[] = [];
 
-      message?.channel.send(
-        `<@${message.author.id}> used the card`,
-        attachment
-      );
+      for (let i = 0; i < 30; i++) {
+        hand.push({
+          color: UnoColor.BLACK,
+          identifier: UnoCard.CHANGE,
+          number: 0
+        });
+      }
+
+      const handImages = await CardHelper.loadHand(hand);
+
+      const attachments = handImages
+        .sort(value => value.length)
+        .map(handImage => new MessageAttachment(handImage));
+
+      message?.channel.send(`<@${message.author.id}>-senpai hands uwu`);
+
+      attachments.forEach(attachment => {
+        message?.channel.send(attachment);
+      });
     }
   };
 }

@@ -1,15 +1,20 @@
 import jimp from 'jimp';
 import path from 'path';
 
+import { ICard } from '../../ts/interface/ICard';
+
 import { UnoColor } from '../../ts/enum/UnoColor';
 import { UnoCard } from '../../ts/enum/UnoCard';
-import Card from '../models/Card';
 
 class CardHelper {
   private ASSET_EXTENSION: string;
+  private MAX_CARDS_IN_LINE: number;
+  private HAND_WIDTH: number;
 
   constructor() {
     this.ASSET_EXTENSION = '.png';
+    this.MAX_CARDS_IN_LINE = 7;
+    this.HAND_WIDTH = this.MAX_CARDS_IN_LINE * 50 + 100;
   }
 
   private _getAssetPath(assetName: string): string {
@@ -24,7 +29,14 @@ class CardHelper {
     return assetPath;
   }
 
-  public async loadCard(color: UnoColor, identifier: UnoCard): Promise<Buffer> {
+  public isSpecialCard(identifier: UnoCard): boolean {
+    const isSpecialCard =
+      identifier === UnoCard.CHANGE || identifier === UnoCard.PLUS_FOUR;
+
+    return isSpecialCard;
+  }
+
+  public async loadCard({ color, identifier }: ICard) {
     const colorAssetPath = this._getAssetPath(color);
     const identifierAssetPath = this._getAssetPath(identifier);
 
@@ -37,52 +49,70 @@ class CardHelper {
 
     const card = colorPart.composite(identifierPart, 0, 0);
 
-    return card.getBufferAsync(jimp.MIME_PNG);
+    return card;
   }
 
-  public unoStack(): void {
-    const numbers = [
-      UnoCard.ZERO,
-      UnoCard.ONE,
-      UnoCard.TWO,
-      UnoCard.THREE,
-      UnoCard.FOUR,
-      UnoCard.FIVE,
-      UnoCard.SIX,
-      UnoCard.SEVEN,
-      UnoCard.EIGHT,
-      UnoCard.NINE,
-      UnoCard.BLOCK,
-      UnoCard.REVERT,
-      UnoCard.PLUS_TWO
-    ];
-    const blacks = [UnoCard.CHANGE, UnoCard.PLUS_FOUR];
-    const colors = [
-      UnoColor.BLUE,
-      UnoColor.GREEN,
-      UnoColor.RED,
-      UnoColor.YELLOW
-    ];
-    const cards: any[] = [];
-    numbers.forEach(number => {
-      colors.forEach(color => {
-        cards.push({ color, identifier: number, number: 1 });
-        if (number !== UnoCard.ZERO)
-          cards.push({ color, identifier: number, number: 2 });
+  public async loadHand(hand: ICard[]): Promise<Buffer[]> {
+    let handImage = new jimp(this.HAND_WIDTH, 220);
+    const handImages: jimp[] = [];
+
+    for (let i = 0; i < hand.length; i++) {
+      const moduleByMaxCardsInLine = i % this.MAX_CARDS_IN_LINE;
+
+      const hasLoadedMaxCards = i !== 0 && moduleByMaxCardsInLine === 0;
+      const isLastIteration = i === hand.length - 1;
+
+      if (hasLoadedMaxCards) {
+        handImages.push(handImage);
+
+        handImage = new jimp(this.HAND_WIDTH, 220);
+      }
+
+      const card = await this.loadCard(hand[i]);
+      handImage = handImage.blit(card, moduleByMaxCardsInLine * 50, 0);
+
+      if (isLastIteration) {
+        handImages.push(handImage);
+      }
+    }
+
+    const handImagesBuffer = Promise.all(
+      handImages.map(image => image.getBufferAsync(jimp.MIME_PNG))
+    );
+
+    return handImagesBuffer;
+  }
+
+  public createBasicDeck(): ICard[] {
+    let deck: ICard[] = [];
+
+    Object.values(UnoCard).forEach(identifier => {
+      Object.values(UnoColor).forEach(color => {
+        const cards: ICard[] = [];
+
+        const isSpecialCard = this.isSpecialCard(identifier);
+
+        if (
+          (isSpecialCard && color === UnoColor.BLACK) ||
+          (!isSpecialCard && color !== UnoColor.BLACK)
+        ) {
+          const numberOfCards =
+            identifier === UnoCard.ZERO ? 1 : isSpecialCard ? 4 : 2;
+
+          for (let i = 0; i < numberOfCards; i++) {
+            cards.push({
+              color,
+              identifier,
+              number: i + 1
+            });
+          }
+        }
+
+        deck = deck.concat(cards);
       });
     });
-    blacks.forEach(black => {
-      cards.push(
-        { color: UnoColor.BLACK, identifier: black, number: 1 },
-        { color: UnoColor.BLACK, identifier: black, number: 2 },
-        { color: UnoColor.BLACK, identifier: black, number: 3 },
-        { color: UnoColor.BLACK, identifier: black, number: 4 }
-      );
-    });
-    cards.forEach(card => {
-      Card.create(card);
-    });
-    return;
+
+    return deck;
   }
 }
 
