@@ -1,21 +1,15 @@
 import { Schema, model } from 'mongoose';
 
-import { IGame } from '../../ts/interface/IGame';
+import { IGameDocument } from '../../ts/interface/IGame';
+
+import card from '../../ts/types/Card';
+import player from '../../ts/types/Player';
 
 const GameSchema: Schema = new Schema(
   {
-    players: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'Player'
-      }
-    ],
-    draw: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'Card'
-      }
-    ],
+    players: [player],
+    draw: [card],
+    table: [card],
     channelId: {
       type: String,
       required: true
@@ -24,4 +18,4 @@ const GameSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-export default model<IGame>('Game', GameSchema);
+export default model<IGameDocument>('Game', GameSchema);

@@ -1,30 +1,31 @@
+import Logger from '../../logger';
+
 import Controller from '../../ts/abstract/Controller';
 
 import { IListener } from '../../ts/interface/IListener';
+
 import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
 
 class GreetingsController extends Controller {
   sayHello: IListener = {
-    socket: SocketEndPoint.Message,
+    socket: SocketEndPoint.MESSAGE,
 
     function: message => {
-      const rawContent = message?.content;
-
-      const [messagePrefix, content] = rawContent?.split(this.DELIMITER) || [];
-
-      if (messagePrefix !== this.PREFIX || content !== 'konichiwa') {
+      if (!message || !this.isCallingBotCommand(message, 'konichiwa')) {
         return;
       }
+
       const phrases = [
         'senpai',
         'kun',
         'san',
         'sama',
-        'kohai',
+        'kouhai',
         'dono',
         'sensei',
         'chibi'
       ];
+
       message?.channel.send(
         'Hello ' + phrases[Math.floor(Math.random() * phrases.length)] + ' uwu'
       );
@@ -32,10 +33,10 @@ class GreetingsController extends Controller {
   };
 
   helloToServer: IListener = {
-    socket: SocketEndPoint.Ready,
+    socket: SocketEndPoint.READY,
 
     function: () => {
-      console.log(`A kawaii hello from Uno-chan!`);
+      Logger.serverLog(`A kawaii hello from Uno-chan!`);
     }
   };
 }
