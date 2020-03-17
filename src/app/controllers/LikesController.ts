@@ -15,7 +15,6 @@ class LikesController extends Controller {
       if (messagePrefix !== this.PREFIX || !content.startsWith("likes")) {
         return;
       }
-      console.log(message);
 
       const taggedUser = message?.mentions.users.first();
       var user = "Ciro Gomes";
