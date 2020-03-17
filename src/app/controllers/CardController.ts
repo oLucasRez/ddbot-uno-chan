@@ -1,8 +1,8 @@
 import { MessageAttachment } from 'discord.js';
 
-import Controller from '../../ts/abstract/Controller';
-
 import CardHelper from '../helpers/CardHelper';
+
+import Controller from '../../ts/abstract/Controller';
 
 import { IListener } from '../../ts/interface/IListener';
 

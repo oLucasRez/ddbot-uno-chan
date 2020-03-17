@@ -1,10 +1,10 @@
 import jimp from 'jimp';
 import path from 'path';
 
+import { ICard } from '../../ts/interface/ICard';
+
 import { UnoColor } from '../../ts/enum/UnoColor';
 import { UnoCard } from '../../ts/enum/UnoCard';
-
-import { ICard } from '../../ts/interface/ICard';
 
 class CardHelper {
   private ASSET_EXTENSION: string;

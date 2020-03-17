@@ -1,9 +1,10 @@
+import Logger from '../../logger';
+
 import Controller from '../../ts/abstract/Controller';
 
 import { IListener } from '../../ts/interface/IListener';
+
 import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
-import CardHelper from '../helpers/CardHelper';
-import Logger from '../../logger';
 
 class GreetingsController extends Controller {
   sayHello: IListener = {

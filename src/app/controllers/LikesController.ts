@@ -1,6 +1,7 @@
 import Controller from '../../ts/abstract/Controller';
 
 import { IListener } from '../../ts/interface/IListener';
+
 import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
 
 class LikesController extends Controller {
@@ -40,6 +41,7 @@ class LikesController extends Controller {
       'slice of life',
       'boku no piko'
     ];
+
     const plus = [
       'likes a lot',
       'really likes',
@@ -47,14 +49,13 @@ class LikesController extends Controller {
       "doesn't likes",
       'hates'
     ];
-    return (
-      username +
-      ' ' +
-      plus[Math.floor(Math.random() * plus.length)] +
-      ' ' +
-      phrases[Math.floor(Math.random() * phrases.length)] +
-      ' style'
-    );
+
+    const randomPlusIndex = Math.floor(Math.random() * plus.length);
+    const randomPhraseIndex = Math.floor(Math.random() * phrases.length);
+
+    const randomPhrase = `${username} ${plus[randomPlusIndex]} ${phrases[randomPhraseIndex]} style`;
+
+    return randomPhrase;
   }
 }
 
