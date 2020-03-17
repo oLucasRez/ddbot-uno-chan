@@ -16,10 +16,8 @@ import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
 class GameController extends Controller {
   startGame: IListener = {
     socket: SocketEndPoint.MESSAGE,
-    function: async message => {
-      if (!message || !this.isCallingBotCommand(message, 'create')) {
-        return;
-      }
+    function: message => {
+      if (!message || !this.isCallingBotCommand(message, 'create')) return;
 
       const { tag } = message.author;
       const { id: channelId } = message.channel;
@@ -42,14 +40,23 @@ class GameController extends Controller {
       Game.create(game)
         .then(() => {
           Logger.serverLog(
-            `New game created by ${player.tag}-kun in channel ${channelId} uwu!`
+            `New game created by ${player.tag}-kun ` +
+              `in channel ${channelId}! ( > ω o)`
           );
         })
         .catch(() => {
           Logger.serverLog(
-            `Sorry ${player.tag}-kun :c, Uno-chan couldn't create your game in channel ${channelId} >.<`
+            `Sorry ${player.tag}-kun :c, Uno-chan couldn't ` +
+              `create your game in channel ${channelId} >.<`
           );
         });
+    }
+  };
+
+  enterGame: IListener = {
+    socket: SocketEndPoint.MESSAGE,
+    function: message => {
+      if (!message || !this.isCallingBotCommand(message, 'enter')) return;
     }
   };
 }

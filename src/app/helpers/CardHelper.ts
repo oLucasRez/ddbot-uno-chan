@@ -10,11 +10,18 @@ class CardHelper {
   private ASSET_EXTENSION: string;
   private MAX_CARDS_IN_LINE: number;
   private HAND_WIDTH: number;
+  private CARD_HEIGHT: number;
+  private CARD_WIDTH: number;
+  private CARD_SPACE: number;
 
   constructor() {
     this.ASSET_EXTENSION = '.png';
     this.MAX_CARDS_IN_LINE = 7;
-    this.HAND_WIDTH = this.MAX_CARDS_IN_LINE * 50 + 100;
+    this.CARD_HEIGHT = 220;
+    this.CARD_WIDTH = 150;
+    this.CARD_SPACE = 50;
+    this.HAND_WIDTH =
+      (this.MAX_CARDS_IN_LINE - 1) * this.CARD_SPACE + this.CARD_WIDTH;
   }
 
   private _getAssetPath(assetName: string): string {
@@ -29,14 +36,14 @@ class CardHelper {
     return assetPath;
   }
 
-  public isSpecialCard(identifier: UnoCard): boolean {
+  private _isSpecialCard(identifier: UnoCard): boolean {
     const isSpecialCard =
       identifier === UnoCard.CHANGE || identifier === UnoCard.PLUS_FOUR;
 
     return isSpecialCard;
   }
 
-  public async loadCard({ color, identifier }: ICard) {
+  private async _loadCard({ color, identifier }: ICard) {
     const colorAssetPath = this._getAssetPath(color);
     const identifierAssetPath = this._getAssetPath(identifier);
 
@@ -53,7 +60,7 @@ class CardHelper {
   }
 
   public async loadHand(hand: ICard[]): Promise<Buffer[]> {
-    let handImage = new jimp(this.HAND_WIDTH, 220);
+    let handImage = new jimp(this.HAND_WIDTH, this.CARD_HEIGHT);
     const handImages: jimp[] = [];
 
     for (let i = 0; i < hand.length; i++) {
@@ -65,11 +72,15 @@ class CardHelper {
       if (hasLoadedMaxCards) {
         handImages.push(handImage);
 
-        handImage = new jimp(this.HAND_WIDTH, 220);
+        handImage = new jimp(this.HAND_WIDTH, this.CARD_HEIGHT);
       }
 
-      const card = await this.loadCard(hand[i]);
-      handImage = handImage.blit(card, moduleByMaxCardsInLine * 50, 0);
+      const card = await this._loadCard(hand[i]);
+      handImage = handImage.blit(
+        card,
+        moduleByMaxCardsInLine * this.CARD_SPACE,
+        0
+      );
 
       if (isLastIteration) {
         handImages.push(handImage);
@@ -90,7 +101,7 @@ class CardHelper {
       Object.values(UnoColor).forEach(color => {
         const cards: ICard[] = [];
 
-        const isSpecialCard = this.isSpecialCard(identifier);
+        const isSpecialCard = this._isSpecialCard(identifier);
 
         if (
           (isSpecialCard && color === UnoColor.BLACK) ||

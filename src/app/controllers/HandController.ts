@@ -12,18 +12,16 @@ import { IListener } from '../../ts/interface/IListener';
 import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
 import GameHelper from '../helpers/GameHelper';
 
-class CardController extends Controller {
-  card: IListener = {
+class HandController extends Controller {
+  getHand: IListener = {
     socket: SocketEndPoint.MESSAGE,
 
     function: async message => {
-      if (!message || !this.isCallingBotCommand(message, 'loadHand')) {
-        return;
-      }
+      if (!message || !this.isCallingBotCommand(message, 'hand')) return;
 
       const game = await GameHelper.getGame(message.channel.id);
 
-      const hand: ICard[] = GameHelper.newHand(game.draw, 9);
+      const hand: ICard[] = GameHelper.newHand(game.draw, 7);
 
       const handImages = await CardHelper.loadHand(hand);
 
@@ -33,17 +31,11 @@ class CardController extends Controller {
 
       message?.channel.send(`<@${message.author.id}>-senpai hands uwu`);
 
-      const options = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣'];
-
-      attachments.forEach(async attachment => {
-        const sent = await message?.channel.send(attachment);
-
-        options.forEach(option => {
-          sent.react(option);
-        });
+      attachments.forEach(attachment => {
+        message?.channel.send(attachment);
       });
     }
   };
 }
 
-export default new CardController();
+export default new HandController();

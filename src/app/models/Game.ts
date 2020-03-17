@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, models, HookNextFunction } from 'mongoose';
 
 import { IGameDocument } from '../../ts/interface/IGame';
 
@@ -17,5 +17,10 @@ const GameSchema: Schema = new Schema(
   },
   { timestamps: true }
 );
+
+GameSchema.path('channelId').validate(async (channelId: String) => {
+  const gameCount = await models.Game.countDocuments({ channelId });
+  return !gameCount;
+}, 'Game already exists');
 
 export default model<IGameDocument>('Game', GameSchema);

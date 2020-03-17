@@ -5,7 +5,7 @@ const player = {
     type: String,
     required: true
   },
-  hand: [card]
+  hand: { cards: [card], sent: [] }
 };
 
 export default player;
