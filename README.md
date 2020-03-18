@@ -28,7 +28,7 @@ Uno-chan uses a number of projects to work properly:
 
 ### Installation
 
-Dillinger requires [Node.js](https://nodejs.org/) and [MongoDB](https://www.mongodb.com/) to run .
+Uno-chan requires [Node.js](https://nodejs.org/) and [MongoDB](https://www.mongodb.com/) to run .
 
 Install the dependencies and devDependencies and start the server.
 ```js
