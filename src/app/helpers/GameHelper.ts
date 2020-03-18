@@ -3,6 +3,7 @@ import { ICard } from '../../ts/interface/ICard';
 import { IGame, IGameDocument } from '../../ts/interface/IGame';
 
 import Game from '../models/Game';
+import { GuildEmoji } from 'discord.js';
 
 class GameHelper {
   public static createPlayer(tag: string): IPlayer {
@@ -54,6 +55,18 @@ class GameHelper {
           };
       });
   }
+
+  public static options: string[] = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣'];
+
+  // public static options = {
+  //   '1️⃣': 0,
+  //   '2️⃣': 1,
+  //   '3️⃣': 2,
+  //   '4️⃣': 3,
+  //   '5️⃣': 4,
+  //   '6️⃣': 5,
+  //   '7️⃣': 6
+  // };
 }
 
 export default GameHelper;

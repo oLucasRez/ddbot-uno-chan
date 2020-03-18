@@ -12,23 +12,29 @@ import { IListener } from '../../ts/interface/IListener';
 import { IGame } from '../../ts/interface/IGame';
 
 import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
+import HandHelper from '../helpers/HandHelper';
 
 class GameController extends Controller {
   startGame: IListener = {
     socket: SocketEndPoint.MESSAGE,
-    function: message => {
+    function: async message => {
       if (!message || !this.isCallingBotCommand(message, 'create')) return;
 
       const { tag } = message.author;
       const { id: channelId } = message.channel;
 
-      const player = GameHelper.createPlayer(tag);
+      message.author.send("Let's play a new game, onii-chan *‿*");
 
       const deck = CardHelper.createBasicDeck();
       const draw: ICard[] = GameHelper.shuffleDraw(deck);
 
       const firstCard = draw.pop();
       const table: ICard[] = firstCard ? [firstCard] : [];
+
+      const player = GameHelper.createPlayer(tag);
+      player.hand.cards = GameHelper.newHand(draw, CardHelper.FIRST_HAND);
+
+      player.hand.sent = await HandHelper.showHand(player, message.author);
 
       const game: IGame = {
         players: [player],
@@ -41,13 +47,13 @@ class GameController extends Controller {
         .then(() => {
           Logger.serverLog(
             `New game created by ${player.tag}-kun ` +
-              `in channel ${channelId}! ( > ω o)`
+              `in channel ${channelId}!`
           );
         })
         .catch(() => {
-          Logger.serverLog(
-            `Sorry ${player.tag}-kun :c, Uno-chan couldn't ` +
-              `create your game in channel ${channelId} >.<`
+          Logger.serverError(
+            `Sorry ${player.tag}-kun, Uno-chan couldn't ` +
+              `create your game in channel ${channelId}`
           );
         });
     }
