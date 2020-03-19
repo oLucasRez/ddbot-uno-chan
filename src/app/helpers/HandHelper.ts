@@ -2,10 +2,17 @@ import CardHelper from './CardHelper';
 import { IPlayer } from '../../ts/interface/IPlayer';
 import { MessageAttachment, User, Message } from 'discord.js';
 import GameHelper from './GameHelper';
+import PlayerHelper from './PlayerHelper';
+import { ICard } from '../../ts/interface/ICard';
 
 class HandHelper {
-  public static async showHand(player: IPlayer, user: User): Promise<string[]> {
+  public static newHand(draw: ICard[], numberCards: number): ICard[] {
+    return draw.splice(0, numberCards);
+  }
+
+  public static async showHand(player: IPlayer): Promise<string[]> {
     const { cards, sent } = player.hand;
+    const user = await PlayerHelper.getUser(player.id);
 
     const newSent = sent;
 

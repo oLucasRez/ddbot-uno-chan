@@ -1,4 +1,4 @@
-import { Schema, model, models, HookNextFunction } from 'mongoose';
+import { Schema, model, models } from 'mongoose';
 
 import { IGameDocument } from '../../ts/interface/IGame';
 
@@ -8,6 +8,8 @@ import player from '../../ts/types/Player';
 const GameSchema: Schema = new Schema(
   {
     players: [player],
+    direction: Number,
+    playerTurn: Number,
     draw: [card],
     table: [card],
     channelId: {

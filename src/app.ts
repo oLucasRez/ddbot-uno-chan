@@ -5,7 +5,7 @@ import listeners from './listeners';
 import Logger from './logger';
 
 class App {
-  private client: Discord.Client;
+  public client: Discord.Client;
 
   private TOKEN: string;
   private CONNECTION_STRING: string;
@@ -36,7 +36,7 @@ class App {
 
       Logger.serverLog('kawaii-db connected and running uwu!');
     } catch {
-      Logger.serverLog('kawaii-db not connected :c');
+      Logger.serverError('kawaii-db not connected');
     }
   }
 

@@ -5,6 +5,7 @@ import Controller from '../../ts/abstract/Controller';
 import { IListener } from '../../ts/interface/IListener';
 
 import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
+import SuffixHelper from '../helpers/SuffixHelper';
 
 class GreetingsController extends Controller {
   sayHello: IListener = {
@@ -15,20 +16,7 @@ class GreetingsController extends Controller {
         return;
       }
 
-      const phrases = [
-        'senpai',
-        'kun',
-        'san',
-        'sama',
-        'kouhai',
-        'dono',
-        'sensei',
-        'chibi'
-      ];
-
-      message?.channel.send(
-        'Hello ' + phrases[Math.floor(Math.random() * phrases.length)] + ' uwu'
-      );
+      message?.channel.send('Hello -' + SuffixHelper.randomSuffix() + ' uwu');
     }
   };
 

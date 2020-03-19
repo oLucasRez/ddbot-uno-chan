@@ -1,5 +1,3 @@
-import { Document } from 'mongoose';
-
 import { UnoCard } from '../enum/UnoCard';
 import { UnoColor } from '../enum/UnoColor';
 

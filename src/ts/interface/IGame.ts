@@ -5,6 +5,8 @@ import { ICard } from './ICard';
 
 export interface IGameDocument extends Document {
   players: IPlayer[];
+  direction: Number;
+  playerTurn: number;
   draw: ICard[];
   table: ICard[];
   channelId: string;
@@ -12,6 +14,8 @@ export interface IGameDocument extends Document {
 
 export interface IGame {
   players: IPlayer[];
+  direction: Number;
+  playerTurn: number;
   draw: ICard[];
   table: ICard[];
   channelId: string;

@@ -1,7 +1,7 @@
 import card from './Card';
 
 const player = {
-  tag: {
+  id: {
     type: String,
     required: true
   },

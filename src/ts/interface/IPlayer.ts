@@ -1,6 +1,6 @@
 import { ICard } from './ICard';
 
 export interface IPlayer {
-  tag: string;
+  id: string;
   hand: { cards: ICard[]; sent: string[] };
 }

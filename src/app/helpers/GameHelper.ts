@@ -1,13 +1,11 @@
-import { IPlayer } from '../../ts/interface/IPlayer';
 import { ICard } from '../../ts/interface/ICard';
-import { IGame, IGameDocument } from '../../ts/interface/IGame';
-
 import Game from '../models/Game';
-import { GuildEmoji } from 'discord.js';
 
 class GameHelper {
-  public static createPlayer(tag: string): IPlayer {
-    return { tag, hand: { cards: [], sent: [] } };
+  public static options: string[] = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣'];
+
+  public static async getGame(channelId: string) {
+    return await Game.findOne({ channelId }).exec();
   }
 
   public static shuffleDraw(draw: ICard[]): ICard[] {
@@ -26,47 +24,6 @@ class GameHelper {
 
     return draw;
   }
-
-  public static newHand(draw: ICard[], numberCards: number): ICard[] {
-    return draw.splice(0, numberCards);
-  }
-
-  public static async getGame(channelId: string): Promise<IGame> {
-    return Game.findOne({ channelId })
-      .exec()
-      .then((value: IGameDocument | null) => {
-        if (value) {
-          const { players, draw, table, channelId } = value;
-
-          const game = {
-            players,
-            draw,
-            table,
-            channelId
-          };
-
-          return game;
-        } else
-          return {
-            players: [],
-            draw: [],
-            table: [],
-            channelId: ''
-          };
-      });
-  }
-
-  public static options: string[] = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣'];
-
-  // public static options = {
-  //   '1️⃣': 0,
-  //   '2️⃣': 1,
-  //   '3️⃣': 2,
-  //   '4️⃣': 3,
-  //   '5️⃣': 4,
-  //   '6️⃣': 5,
-  //   '7️⃣': 6
-  // };
 }
 
 export default GameHelper;

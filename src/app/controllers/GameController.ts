@@ -1,9 +1,11 @@
-import GameHelper from '../helpers/GameHelper';
 import Logger from '../../logger';
-
-import CardHelper from '../helpers/CardHelper';
-
 import Controller from '../../ts/abstract/Controller';
+
+import GameHelper from '../helpers/GameHelper';
+import CardHelper from '../helpers/CardHelper';
+import EmbedHelper from '../helpers/EmbedHelper';
+import SuffixHelper from '../helpers/SuffixHelper';
+import PlayerHelper from '../helpers/PlayerHelper';
 
 import Game from '../models/Game';
 
@@ -12,48 +14,50 @@ import { IListener } from '../../ts/interface/IListener';
 import { IGame } from '../../ts/interface/IGame';
 
 import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
-import HandHelper from '../helpers/HandHelper';
 
 class GameController extends Controller {
   startGame: IListener = {
     socket: SocketEndPoint.MESSAGE,
+
     function: async message => {
       if (!message || !this.isCallingBotCommand(message, 'create')) return;
 
-      const { tag } = message.author;
       const { id: channelId } = message.channel;
-
-      message.author.send("Let's play a new game, onii-chan *‿*");
 
       const deck = CardHelper.createBasicDeck();
       const draw: ICard[] = GameHelper.shuffleDraw(deck);
 
-      const firstCard = draw.pop();
-      const table: ICard[] = firstCard ? [firstCard] : [];
-
-      const player = GameHelper.createPlayer(tag);
-      player.hand.cards = GameHelper.newHand(draw, CardHelper.FIRST_HAND);
-
-      player.hand.sent = await HandHelper.showHand(player, message.author);
+      const _firstCard = draw.pop();
+      const table: ICard[] = _firstCard ? [_firstCard] : [];
 
       const game: IGame = {
-        players: [player],
+        players: [],
+        direction: 1,
+        playerTurn: 0,
         draw,
         table,
         channelId
       };
 
+      const name = message.member?.nickname ?? message.author.username;
+
       Game.create(game)
         .then(() => {
           Logger.serverLog(
-            `New game created by ${player.tag}-kun ` +
+            `New game created by ${name}-${SuffixHelper.randomSuffix()} ` +
               `in channel ${channelId}!`
           );
+
+          PlayerHelper.enterPlayer(message);
         })
         .catch(() => {
+          EmbedHelper.sendError(
+            `Uno-chan couldn't create your game in channel ${channelId}`,
+            message
+          );
           Logger.serverError(
-            `Sorry ${player.tag}-kun, Uno-chan couldn't ` +
-              `create your game in channel ${channelId}`
+            `Uno-chan couldn't create ${name}-${SuffixHelper.randomSuffix()}'s` +
+              ` game in channel ${channelId}`
           );
         });
     }
@@ -61,8 +65,11 @@ class GameController extends Controller {
 
   enterGame: IListener = {
     socket: SocketEndPoint.MESSAGE,
-    function: message => {
+
+    function: async message => {
       if (!message || !this.isCallingBotCommand(message, 'enter')) return;
+
+      PlayerHelper.enterPlayer(message);
     }
   };
 }

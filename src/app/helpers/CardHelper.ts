@@ -18,7 +18,7 @@ class CardHelper {
   constructor() {
     this.ASSET_EXTENSION = '.png';
     this.MAX_CARDS_IN_LINE = 7;
-    this.FIRST_HAND = 9;
+    this.FIRST_HAND = 7;
     this.CARD_HEIGHT = 220;
     this.CARD_WIDTH = 150;
     this.CARD_SPACE = 50;
