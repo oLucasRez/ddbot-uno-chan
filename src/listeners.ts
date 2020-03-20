@@ -9,7 +9,7 @@ import ReactionController from './app/controllers/ReactionController';
 const listeners: IListener[] = [
   GreetingsController.helloToServer,
   GreetingsController.sayHello,
-  GameController.startGame,
+  GameController.createGame,
   GameController.enterGame,
   LikesController.likes,
   // CardController.card,

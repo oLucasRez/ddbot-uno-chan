@@ -5,7 +5,7 @@ import Controller from '../../ts/abstract/Controller';
 import { IListener } from '../../ts/interface/IListener';
 
 import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
-import SuffixHelper from '../helpers/SuffixHelper';
+// import SuffixHelper from '../helpers/SuffixHelper';
 
 class GreetingsController extends Controller {
   sayHello: IListener = {
@@ -16,7 +16,7 @@ class GreetingsController extends Controller {
         return;
       }
 
-      message?.channel.send('Hello -' + SuffixHelper.randomSuffix() + ' uwu');
+      // message?.channel.send('Hello -' + SuffixHelper.randomSuffix() + ' uwu');
     }
   };
 

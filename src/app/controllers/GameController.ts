@@ -1,22 +1,26 @@
-import Logger from '../../logger';
+import { Message, User, Channel } from 'discord.js';
 import Controller from '../../ts/abstract/Controller';
+
+import Logger from '../../logger';
 
 import GameHelper from '../helpers/GameHelper';
 import CardHelper from '../helpers/CardHelper';
-import EmbedHelper from '../helpers/EmbedHelper';
-import SuffixHelper from '../helpers/SuffixHelper';
 import PlayerHelper from '../helpers/PlayerHelper';
+import HandHelper from '../helpers/HandHelper';
 
 import Game from '../models/Game';
 
 import { ICard } from '../../ts/interface/ICard';
 import { IListener } from '../../ts/interface/IListener';
 import { IGame } from '../../ts/interface/IGame';
+import { IPlayer } from '../../ts/interface/IPlayer';
 
 import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
+import { Response } from '../../ts/enum/Response';
+import Embed from '../../Embed';
 
 class GameController extends Controller {
-  startGame: IListener = {
+  createGame: IListener = {
     socket: SocketEndPoint.MESSAGE,
 
     function: async message => {
@@ -44,19 +48,15 @@ class GameController extends Controller {
       Game.create(game)
         .then(() => {
           Logger.serverLog(
-            `New game created by ${name}-${SuffixHelper.randomSuffix()} ` +
+            `New game created by ${name}-${Logger.randomSuffix()} ` +
               `in channel ${channelId}!`
           );
 
-          PlayerHelper.enterPlayer(message);
+          this._enterPlayer(message);
         })
         .catch(() => {
-          EmbedHelper.sendError(
-            `Uno-chan couldn't create your game in channel ${channelId}`,
-            message
-          );
           Logger.serverError(
-            `Uno-chan couldn't create ${name}-${SuffixHelper.randomSuffix()}'s` +
+            `Uno-chan couldn't create ${name}-${Logger.randomSuffix()}'s` +
               ` game in channel ${channelId}`
           );
         });
@@ -69,9 +69,40 @@ class GameController extends Controller {
     function: async message => {
       if (!message || !this.isCallingBotCommand(message, 'enter')) return;
 
-      PlayerHelper.enterPlayer(message);
+      this._enterPlayer(message);
     }
   };
+
+  private async _enterPlayer(message: Message) {
+    const { channel, author: user } = message;
+
+    const game = await GameHelper.getGame(channel.id);
+    if (!game) {
+      Logger.serverError(`Game not created in channel ${channel.id}`);
+    } else {
+      const hand = HandHelper.newHand(game.draw, CardHelper.FIRST_HAND);
+      const handImages = await CardHelper.loadHand(hand);
+
+      const player: IPlayer = PlayerHelper.createEmptyPlayer(user.id);
+
+      player.hand.cards = hand;
+
+      const name = message.member?.nickname ?? message.author.username;
+
+      switch (await PlayerHelper.enterPlayer(game, player)) {
+        case Response.GAME_NOT_CREATED:
+          Logger.serverError(`Game not created`);
+          break;
+        case Response.PLAYER_ALREADY_CREATED:
+          Logger.serverWarn(`${name} is already in the game`);
+          break;
+        case Response.SUCCESS:
+          Logger.serverLog(`${name} entered in the game`);
+          await HandHelper.showHand(player, user, game, handImages);
+          break;
+      }
+    }
+  }
 }
 
 export default new GameController();

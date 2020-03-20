@@ -1,10 +1,12 @@
-import { ICard } from '../../ts/interface/ICard';
 import Game from '../models/Game';
 
-class GameHelper {
-  public static options: string[] = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣'];
+import { ICard } from '../../ts/interface/ICard';
+import { IGameDocument } from '../../ts/interface/IGame';
 
-  public static async getGame(channelId: string) {
+class GameHelper {
+  public static async getGame(
+    channelId: string
+  ): Promise<IGameDocument | null> {
     return await Game.findOne({ channelId }).exec();
   }
 

@@ -5,7 +5,7 @@ import listeners from './listeners';
 import Logger from './logger';
 
 class App {
-  public client: Discord.Client;
+  private client: Discord.Client;
 
   private TOKEN: string;
   private CONNECTION_STRING: string;

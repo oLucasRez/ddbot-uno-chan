@@ -1,65 +1,39 @@
-import { User, Message } from 'discord.js';
-
-import app from '../../app';
-import Logger from '../../logger';
-
-import EmbedHelper from './EmbedHelper';
-import CardHelper from './CardHelper';
-import HandHelper from './HandHelper';
-import GameHelper from './GameHelper';
+import { User, Client } from 'discord.js';
 
 import Game from '../models/Game';
 
 import { IPlayer } from '../../ts/interface/IPlayer';
+import { IGame, IGameDocument } from '../../ts/interface/IGame';
+
+import Logger from '../../logger';
+
+import { Response } from '../../ts/enum/Response';
 
 class PlayerHelper {
-  private static _createPlayer(id: string): IPlayer {
+  public static createEmptyPlayer(id: string): IPlayer {
     return { id, hand: { cards: [], sent: [] } };
   }
 
-  public static getUser(id: string): Promise<User> {
-    return app.client.users.fetch(id);
+  public static getUser(client: Client, id: string): Promise<User> {
+    return client.users.fetch(id);
   }
 
-  public static async enterPlayer(message: Message) {
-    const { channel, author, member } = message;
-    const { id } = author;
-    const { id: channelId } = channel;
+  public static async enterPlayer(
+    game: IGame | IGameDocument,
+    player: IPlayer
+  ): Promise<Response> {
+    const { channelId } = game;
 
-    const name = member?.nickname ?? author.username;
-
-    const game = await GameHelper.getGame(channelId);
-
-    if (game?.players.find(player => player.id === id)) {
-      Logger.serverError(`${name} is already in the game`);
-
-      EmbedHelper.sendError(
-        'You cannot enter the game twice, you are already in the game',
-        message
-      );
+    if (game?.players.find(_player => _player.id === player.id)) {
+      return Response.PLAYER_ALREADY_CREATED;
     } else if (game) {
-      const player = this._createPlayer(author.id);
+      await Game.updateOne({ channelId }, { $push: { players: player } });
 
-      EmbedHelper.sendHello(message.author);
-
-      await Game.updateOne(
-        { channelId },
-        { $push: { players: player } },
-        error => {
-          if (error) {
-            Logger.serverError(`Cannot enter ${name} in the game`);
-          } else {
-            Logger.serverLog(`${name} successfully entered the game`);
-          }
-        }
-      );
-
-      EmbedHelper.sendTable(message);
-
-      player.hand.cards = HandHelper.newHand(game?.draw, CardHelper.FIRST_HAND);
-      player.hand.sent = await HandHelper.showHand(player);
+      return Response.SUCCESS;
     } else {
       Logger.serverError('Game not created yet');
+
+      return Response.GAME_NOT_CREATED;
     }
   }
 }

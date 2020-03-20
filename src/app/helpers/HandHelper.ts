@@ -1,44 +1,42 @@
 import { MessageAttachment, User, Message } from 'discord.js';
 
-import CardHelper from './CardHelper';
-import GameHelper from './GameHelper';
-import PlayerHelper from './PlayerHelper';
-
 import { IPlayer } from '../../ts/interface/IPlayer';
 import { ICard } from '../../ts/interface/ICard';
+import Game from '../models/Game';
+import { IGame, IGameDocument } from '../../ts/interface/IGame';
+import GameHelper from './GameHelper';
 
 class HandHelper {
+  static MAX_CARDS_IN_LINE: number = 7;
+  private static options: string[] = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣'];
+
   public static newHand(draw: ICard[], numberCards: number): ICard[] {
     return draw.splice(0, numberCards);
   }
 
-  public static async showHand(player: IPlayer): Promise<string[]> {
+  public static async showHand(
+    player: IPlayer,
+    user: User,
+    game: IGame | IGameDocument,
+    handImages: Buffer[]
+  ) {
     const { cards, sent } = player.hand;
-
-    const user = await PlayerHelper.getUser(player.id);
 
     const newSent = sent;
 
-    const _sentRequired = Math.ceil(
-      cards.length / CardHelper.MAX_CARDS_IN_LINE
-    );
-
+    const _sentRequired = Math.ceil(cards.length / this.MAX_CARDS_IN_LINE);
     const sentOverflow = sent.length - _sentRequired;
 
-    const _handImages = await CardHelper.loadHand(player.hand.cards);
-
-    const attachments = _handImages
+    const attachments = handImages
       .sort(value => value.length)
       .map(handImage => new MessageAttachment(handImage));
 
     let numberHand: number = cards.length;
 
     const threshold = (numberHand: number) =>
-      numberHand > CardHelper.MAX_CARDS_IN_LINE
-        ? CardHelper.MAX_CARDS_IN_LINE
-        : numberHand;
+      numberHand > this.MAX_CARDS_IN_LINE ? this.MAX_CARDS_IN_LINE : numberHand;
 
-    sent.forEach((messageID, i) =>
+    sent.forEach((messageID, i) => {
       user.dmChannel.messages
         .fetch({
           around: messageID,
@@ -48,24 +46,27 @@ class HandHelper {
           const message = messages.first();
 
           if (!attachments[i]) {
+            //no excesso de mensagens, as exclui
             message?.delete();
           } else {
+            //edita as mensagens já existentes e reage
             message?.edit(attachments[i]);
 
             for (let i = 0; i < threshold(numberHand); i++) {
-              message?.react(GameHelper.options[i]);
+              message?.react(this.options[i]);
             }
 
-            numberHand -= CardHelper.MAX_CARDS_IN_LINE;
+            numberHand -= this.MAX_CARDS_IN_LINE;
           }
-        })
-    );
+        });
+    });
 
     numberHand = cards.length;
 
     const promises: Promise<Message>[] = [];
 
     if (sentOverflow < 0) {
+      //na falta de mensagens, cria-se novas e reage
       for (let i = 0; i < -sentOverflow; i++) {
         const _promise = user.send(attachments[sent.length + i]);
 
@@ -73,15 +74,16 @@ class HandHelper {
           newSent.push(message.id);
 
           for (let i = 0; i < threshold(numberHand); i++) {
-            message.react(GameHelper.options[i]);
+            message.react(this.options[i]);
           }
 
-          numberHand -= CardHelper.MAX_CARDS_IN_LINE;
+          numberHand -= this.MAX_CARDS_IN_LINE;
         });
 
         promises.push(_promise);
       }
     } else if (sentOverflow > 0) {
+      //no excesso de mensagens, remove do array
       for (let i = 0; i < sentOverflow; i++) {
         newSent.pop();
       }
@@ -89,7 +91,7 @@ class HandHelper {
 
     await Promise.all(promises);
 
-    return newSent;
+    // mudar o sent do player em questao no banco com o newSent
   }
 }
 
