@@ -1,22 +1,24 @@
 import { Message, User, MessageAttachment } from 'discord.js';
 
-import { IEmbed } from '../../ts/interface/IEmbed';
-import { EmbedColor } from '../../ts/enum/EmbedColor';
 import SuffixHelper from './SuffixHelper';
-import { UnoColor } from '../../ts/enum/UnoColor';
 import PlayerHelper from './PlayerHelper';
 import GameHelper from './GameHelper';
 import CardHelper from './CardHelper';
+
+import { IEmbed } from '../../ts/interface/IEmbed';
+
+import { EmbedColor } from '../../ts/enum/EmbedColor';
+import { UnoColor } from '../../ts/enum/UnoColor';
 
 class EmbedHelper {
   public static sendError(
     text: string,
     { channel, author, member }: Message
   ): void {
-    const _name = member?.nickname ?? author.username;
+    const name = member?.nickname ?? author.username;
 
     const embed: IEmbed = {
-      title: `Gomen'nasai, ${_name}-${SuffixHelper.randomSuffix()}`,
+      title: `Gomen'nasai, ${name}-${SuffixHelper.randomSuffix()}`,
       description: text,
       color: EmbedColor.RED,
       thumbnail: {
@@ -30,6 +32,7 @@ class EmbedHelper {
 
   public static async sendTable({ author, channel }: Message) {
     const game = await GameHelper.getGame(channel.id);
+
     if (!game) return;
 
     const tableCard = game.table[game.table.length - 1];
@@ -38,18 +41,29 @@ class EmbedHelper {
     const { id } = game.players[game.playerTurn];
     const player = await PlayerHelper.getUser(id);
 
-    const color =
-      tableCard.color === UnoColor.BLACK
-        ? EmbedColor.BLACK
-        : tableCard.color === UnoColor.BLUE
-        ? EmbedColor.BLUE
-        : tableCard.color === UnoColor.GREEN
-        ? EmbedColor.GREEN
-        : tableCard.color === UnoColor.RED
-        ? EmbedColor.RED
-        : tableCard.color === UnoColor.YELLOW
-        ? EmbedColor.YELLOW
-        : EmbedColor.BLACK;
+    let color: EmbedColor;
+
+    switch (tableCard.color) {
+      case UnoColor.BLACK:
+        color = EmbedColor.BLACK;
+        break;
+
+      case UnoColor.RED:
+        color = EmbedColor.RED;
+        break;
+
+      case UnoColor.YELLOW:
+        color = EmbedColor.YELLOW;
+        break;
+
+      case UnoColor.BLUE:
+        color = EmbedColor.BLUE;
+        break;
+
+      case UnoColor.GREEN:
+        color = EmbedColor.GREEN;
+        break;
+    }
 
     const embed: IEmbed = {
       title: 'Table',

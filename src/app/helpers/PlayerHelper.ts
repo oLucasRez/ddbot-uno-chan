@@ -1,12 +1,16 @@
 import { User, Message } from 'discord.js';
+
 import app from '../../app';
-import Game from '../models/Game';
 import Logger from '../../logger';
+
 import EmbedHelper from './EmbedHelper';
 import CardHelper from './CardHelper';
 import HandHelper from './HandHelper';
-import { IPlayer } from '../../ts/interface/IPlayer';
 import GameHelper from './GameHelper';
+
+import Game from '../models/Game';
+
+import { IPlayer } from '../../ts/interface/IPlayer';
 
 class PlayerHelper {
   private static _createPlayer(id: string): IPlayer {
@@ -20,13 +24,15 @@ class PlayerHelper {
   public static async enterPlayer(message: Message) {
     const { channel, author, member } = message;
     const { id } = author;
-    const name = member?.nickname ?? author.username;
     const { id: channelId } = channel;
+
+    const name = member?.nickname ?? author.username;
 
     const game = await GameHelper.getGame(channelId);
 
     if (game?.players.find(player => player.id === id)) {
       Logger.serverError(`${name} is already in the game`);
+
       EmbedHelper.sendError(
         'You cannot enter the game twice, you are already in the game',
         message
@@ -39,9 +45,12 @@ class PlayerHelper {
       await Game.updateOne(
         { channelId },
         { $push: { players: player } },
-        err => {
-          if (err) Logger.serverError(`Cannot enter ${name} in the game`);
-          else Logger.serverLog(`${name} successfully entered the game`);
+        error => {
+          if (error) {
+            Logger.serverError(`Cannot enter ${name} in the game`);
+          } else {
+            Logger.serverLog(`${name} successfully entered the game`);
+          }
         }
       );
 
@@ -49,7 +58,9 @@ class PlayerHelper {
 
       player.hand.cards = HandHelper.newHand(game?.draw, CardHelper.FIRST_HAND);
       player.hand.sent = await HandHelper.showHand(player);
-    } else Logger.serverError('Game not created yet');
+    } else {
+      Logger.serverError('Game not created yet');
+    }
   }
 }
 

@@ -78,6 +78,7 @@ class CardHelper {
       }
 
       const card = await this._loadCard(hand[i]);
+
       handImage = handImage.blit(
         card,
         moduleByMaxCardsInLine * this.CARD_SPACE,

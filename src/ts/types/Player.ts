@@ -5,7 +5,14 @@ const player = {
     type: String,
     required: true
   },
-  hand: { cards: [card], sent: [] }
+  hand: {
+    cards: [card],
+    sent: [
+      {
+        type: String
+      }
+    ]
+  }
 };
 
 export default player;

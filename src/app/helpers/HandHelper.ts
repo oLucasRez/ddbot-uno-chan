@@ -1,8 +1,10 @@
-import CardHelper from './CardHelper';
-import { IPlayer } from '../../ts/interface/IPlayer';
 import { MessageAttachment, User, Message } from 'discord.js';
+
+import CardHelper from './CardHelper';
 import GameHelper from './GameHelper';
 import PlayerHelper from './PlayerHelper';
+
+import { IPlayer } from '../../ts/interface/IPlayer';
 import { ICard } from '../../ts/interface/ICard';
 
 class HandHelper {
@@ -12,6 +14,7 @@ class HandHelper {
 
   public static async showHand(player: IPlayer): Promise<string[]> {
     const { cards, sent } = player.hand;
+
     const user = await PlayerHelper.getUser(player.id);
 
     const newSent = sent;
@@ -19,14 +22,17 @@ class HandHelper {
     const _sentRequired = Math.ceil(
       cards.length / CardHelper.MAX_CARDS_IN_LINE
     );
+
     const sentOverflow = sent.length - _sentRequired;
 
     const _handImages = await CardHelper.loadHand(player.hand.cards);
+
     const attachments = _handImages
       .sort(value => value.length)
       .map(handImage => new MessageAttachment(handImage));
 
     let numberHand: number = cards.length;
+
     const threshold = (numberHand: number) =>
       numberHand > CardHelper.MAX_CARDS_IN_LINE
         ? CardHelper.MAX_CARDS_IN_LINE
@@ -41,12 +47,15 @@ class HandHelper {
         .then(messages => {
           const message = messages.first();
 
-          if (!attachments[i]) message?.delete();
-          else {
+          if (!attachments[i]) {
+            message?.delete();
+          } else {
             message?.edit(attachments[i]);
 
-            for (let i = 0; i < threshold(numberHand); i++)
+            for (let i = 0; i < threshold(numberHand); i++) {
               message?.react(GameHelper.options[i]);
+            }
+
             numberHand -= CardHelper.MAX_CARDS_IN_LINE;
           }
         })
@@ -63,15 +72,20 @@ class HandHelper {
         _promise.then(message => {
           newSent.push(message.id);
 
-          for (let i = 0; i < threshold(numberHand); i++)
+          for (let i = 0; i < threshold(numberHand); i++) {
             message.react(GameHelper.options[i]);
+          }
+
           numberHand -= CardHelper.MAX_CARDS_IN_LINE;
         });
 
         promises.push(_promise);
       }
-    } else if (sentOverflow > 0)
-      for (let i = 0; i < sentOverflow; i++) newSent.pop();
+    } else if (sentOverflow > 0) {
+      for (let i = 0; i < sentOverflow; i++) {
+        newSent.pop();
+      }
+    }
 
     await Promise.all(promises);
 
