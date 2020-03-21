@@ -1,11 +1,10 @@
 import { User, Client } from 'discord.js';
 
 import Game from '../models/Game';
+import Logger from '../../logger';
 
 import { IPlayer } from '../../ts/interface/IPlayer';
 import { IGame, IGameDocument } from '../../ts/interface/IGame';
-
-import Logger from '../../logger';
 
 import { Response } from '../../ts/enum/Response';
 

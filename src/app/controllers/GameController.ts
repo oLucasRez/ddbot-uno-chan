@@ -1,5 +1,7 @@
-import { Message, User, Channel } from 'discord.js';
+import { Message } from 'discord.js';
 import Controller from '../../ts/abstract/Controller';
+
+import Game from '../models/Game';
 
 import Logger from '../../logger';
 
@@ -8,8 +10,6 @@ import CardHelper from '../helpers/CardHelper';
 import PlayerHelper from '../helpers/PlayerHelper';
 import HandHelper from '../helpers/HandHelper';
 
-import Game from '../models/Game';
-
 import { ICard } from '../../ts/interface/ICard';
 import { IListener } from '../../ts/interface/IListener';
 import { IGame } from '../../ts/interface/IGame';
@@ -17,7 +17,6 @@ import { IPlayer } from '../../ts/interface/IPlayer';
 
 import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
 import { Response } from '../../ts/enum/Response';
-import Embed from '../../Embed';
 
 class GameController extends Controller {
   createGame: IListener = {

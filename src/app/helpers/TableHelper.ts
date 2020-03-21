@@ -1,9 +1,9 @@
 import { MessageAttachment, User } from 'discord.js';
 
+import Logger from '../../logger';
+
 import { IGame } from '../../ts/interface/IGame';
 import { IEmbed } from '../../ts/interface/IEmbed';
-
-import Logger from '../../logger';
 
 import { EmbedColor } from '../../ts/enum/EmbedColor';
 import { UnoColor } from '../../ts/enum/UnoColor';

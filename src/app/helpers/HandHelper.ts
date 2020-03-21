@@ -2,9 +2,7 @@ import { MessageAttachment, User, Message } from 'discord.js';
 
 import { IPlayer } from '../../ts/interface/IPlayer';
 import { ICard } from '../../ts/interface/ICard';
-import Game from '../models/Game';
 import { IGame, IGameDocument } from '../../ts/interface/IGame';
-import GameHelper from './GameHelper';
 
 class HandHelper {
   static MAX_CARDS_IN_LINE: number = 7;
