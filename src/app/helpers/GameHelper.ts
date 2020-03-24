@@ -1,13 +1,17 @@
 import Game from '../models/Game';
 
 import { ICard } from '../../ts/interface/ICard';
-import { IGameDocument } from '../../ts/interface/IGame';
+import { IGameDocument, IGame } from '../../ts/interface/IGame';
 
 class GameHelper {
   public static async getGame(
     channelId: string
   ): Promise<IGameDocument | null> {
     return await Game.findOne({ channelId }).exec();
+  }
+
+  public static async createGame(game: IGame): Promise<IGameDocument> {
+    return Game.create(game);
   }
 
   public static shuffleDraw(draw: ICard[]): ICard[] {

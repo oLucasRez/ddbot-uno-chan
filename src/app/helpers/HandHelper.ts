@@ -2,7 +2,6 @@ import { MessageAttachment, User, Message } from 'discord.js';
 
 import { IPlayer } from '../../ts/interface/IPlayer';
 import { ICard } from '../../ts/interface/ICard';
-import { IGame, IGameDocument } from '../../ts/interface/IGame';
 
 class HandHelper {
   static MAX_CARDS_IN_LINE: number = 7;
@@ -15,9 +14,8 @@ class HandHelper {
   public static async showHand(
     player: IPlayer,
     user: User,
-    game: IGame | IGameDocument,
     handImages: Buffer[]
-  ) {
+  ): Promise<string[]> {
     const { cards, sent } = player.hand;
 
     const newSent = sent;
@@ -29,35 +27,35 @@ class HandHelper {
       .sort(value => value.length)
       .map(handImage => new MessageAttachment(handImage));
 
-    let numberHand: number = cards.length;
+    let numberHand = cards.length;
 
     const threshold = (numberHand: number) =>
       numberHand > this.MAX_CARDS_IN_LINE ? this.MAX_CARDS_IN_LINE : numberHand;
 
-    sent.forEach((messageID, i) => {
+    for (let [index, messageId] of sent.entries()) {
       user.dmChannel.messages
         .fetch({
-          around: messageID,
+          around: messageId,
           limit: 1
         })
         .then(messages => {
           const message = messages.first();
 
-          if (!attachments[i]) {
+          if (!attachments[index]) {
             //no excesso de mensagens, as exclui
             message?.delete();
           } else {
             //edita as mensagens já existentes e reage
-            message?.edit(attachments[i]);
+            message?.edit(attachments[index]);
 
             for (let i = 0; i < threshold(numberHand); i++) {
-              message?.react(this.options[i]);
+              message?.react(this.options[index]);
             }
 
             numberHand -= this.MAX_CARDS_IN_LINE;
           }
         });
-    });
+    }
 
     numberHand = cards.length;
 
@@ -89,7 +87,7 @@ class HandHelper {
 
     await Promise.all(promises);
 
-    // mudar o sent do player em questao no banco com o newSent
+    return newSent;
   }
 }
 

@@ -25,7 +25,7 @@ class Logger {
   static serverWarn(message: string): void {
     const { yellow, reset } = this._consoleColors;
 
-    console.log(`${yellow}%s${reset}`, `[server-sama]: '•_• ${message}`);
+    console.log(`${yellow}%s${reset}`, `[server-sama]:'•_• ${message}`);
   }
   static serverError(message: string): void {
     const { red, reset } = this._consoleColors;

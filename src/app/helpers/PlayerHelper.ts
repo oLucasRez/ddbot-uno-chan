@@ -35,6 +35,35 @@ class PlayerHelper {
       return Response.GAME_NOT_CREATED;
     }
   }
+
+  public static async updatePlayerSentMessages(
+    player: IPlayer,
+    newSent: string[]
+  ) {
+    const game = await Game.findOne({
+      $where: (players: IPlayer[]) => {
+        return players.find(_player => _player.id === player.id);
+      }
+    });
+
+    const otherPlayers = [];
+
+    if (game) {
+      for (const _player of game.players) {
+        if (_player.id !== player.id) {
+          otherPlayers.push(_player);
+        }
+      }
+    }
+
+    player.hand.sent = newSent;
+
+    return game
+      ?.updateOne({
+        players: [...otherPlayers, player]
+      })
+      .exec();
+  }
 }
 
 export default PlayerHelper;

@@ -1,7 +1,6 @@
-import { Message } from 'discord.js';
-import Controller from '../../ts/abstract/Controller';
+import { Message, Client, User } from 'discord.js';
 
-import Game from '../models/Game';
+import Controller from '../../ts/abstract/Controller';
 
 import Logger from '../../logger';
 
@@ -12,7 +11,7 @@ import HandHelper from '../helpers/HandHelper';
 
 import { ICard } from '../../ts/interface/ICard';
 import { IListener } from '../../ts/interface/IListener';
-import { IGame } from '../../ts/interface/IGame';
+import { IGame, IGameDocument } from '../../ts/interface/IGame';
 import { IPlayer } from '../../ts/interface/IPlayer';
 
 import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
@@ -25,6 +24,7 @@ class GameController extends Controller {
     function: async message => {
       if (!message || !this.isCallingBotCommand(message, 'create')) return;
 
+      const { author } = message;
       const { id: channelId } = message.channel;
 
       const deck = CardHelper.createBasicDeck();
@@ -44,14 +44,14 @@ class GameController extends Controller {
 
       const name = message.member?.nickname ?? message.author.username;
 
-      Game.create(game)
-        .then(() => {
+      GameHelper.createGame(game)
+        .then(async gameDocument => {
           Logger.serverLog(
             `New game created by ${name}-${Logger.randomSuffix()} ` +
               `in channel ${channelId}!`
           );
 
-          this._enterPlayer(message);
+          this._initializeUserInGame(author, gameDocument, name);
         })
         .catch(() => {
           Logger.serverError(
@@ -68,39 +68,60 @@ class GameController extends Controller {
     function: async message => {
       if (!message || !this.isCallingBotCommand(message, 'enter')) return;
 
-      this._enterPlayer(message);
-    }
-  };
+      const { author } = message;
+      const { id: channelId } = message.channel;
 
-  private async _enterPlayer(message: Message) {
-    const { channel, author: user } = message;
+      const game = await GameHelper.getGame(channelId);
 
-    const game = await GameHelper.getGame(channel.id);
-    if (!game) {
-      Logger.serverError(`Game not created in channel ${channel.id}`);
-    } else {
-      const hand = HandHelper.newHand(game.draw, CardHelper.FIRST_HAND);
-      const handImages = await CardHelper.loadHand(hand);
-
-      const player: IPlayer = PlayerHelper.createEmptyPlayer(user.id);
-
-      player.hand.cards = hand;
+      if (!game) {
+        Logger.serverError(`Game not created`);
+        return;
+      }
 
       const name = message.member?.nickname ?? message.author.username;
 
-      switch (await PlayerHelper.enterPlayer(game, player)) {
-        case Response.GAME_NOT_CREATED:
-          Logger.serverError(`Game not created`);
-          break;
-        case Response.PLAYER_ALREADY_CREATED:
-          Logger.serverWarn(`${name} is already in the game`);
-          break;
-        case Response.SUCCESS:
-          Logger.serverLog(`${name} entered in the game`);
-          await HandHelper.showHand(player, user, game, handImages);
-          break;
-      }
+      this._initializeUserInGame(author, game, name);
     }
+  };
+
+  private async _initializeUserInGame(
+    user: User,
+    game: IGameDocument,
+    name: string
+  ) {
+    const player = PlayerHelper.createEmptyPlayer(user.id);
+
+    const hand = HandHelper.newHand(game.draw, CardHelper.FIRST_HAND);
+    player.hand.cards = hand;
+
+    const response = await this._putPlayerInGame(player, game);
+
+    switch (response) {
+      case Response.PLAYER_ALREADY_CREATED:
+        Logger.serverWarn(
+          `${name}-${Logger.randomSuffix()} is already in the game`
+        );
+        break;
+
+      case Response.SUCCESS:
+        Logger.serverLog(
+          `${name}-${Logger.randomSuffix()} entered in the game`
+        );
+
+        const hand = HandHelper.newHand(game.draw, CardHelper.FIRST_HAND);
+        const handImages = await CardHelper.loadHand(hand);
+
+        const newSent = await HandHelper.showHand(player, user, handImages);
+
+        PlayerHelper.updatePlayerSentMessages(player, newSent);
+        break;
+    }
+  }
+
+  private async _putPlayerInGame(player: IPlayer, game: IGameDocument) {
+    const response = await PlayerHelper.enterPlayer(game, player);
+
+    return response;
   }
 }
 
