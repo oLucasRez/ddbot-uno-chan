@@ -22,8 +22,13 @@ class GameController extends Controller {
   createGame: IListener = {
     socket: SocketEndPoint.MESSAGE,
 
-    function: async ({ message }) => {
-      if (!message || !this.isCallingBotCommand(message, 'create')) return;
+    function: async message => {
+      if (
+        !message ||
+        !(message instanceof Message) ||
+        !this.isCallingBotCommand(message, 'create')
+      )
+        return;
 
       const { author } = message;
       const { id: channelId } = message.channel;
@@ -72,8 +77,13 @@ class GameController extends Controller {
   enterGame: IListener = {
     socket: SocketEndPoint.MESSAGE,
 
-    function: async ({ message }) => {
-      if (!message || !this.isCallingBotCommand(message, 'enter')) return;
+    function: async message => {
+      if (
+        !message ||
+        !(message instanceof Message) ||
+        !this.isCallingBotCommand(message, 'enter')
+      )
+        return;
 
       const { author } = message;
       const { id: channelId } = message.channel;

@@ -3,15 +3,19 @@ import Controller from '../../ts/abstract/Controller';
 import { IListener } from '../../ts/interface/IListener';
 
 import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
+import { Message } from 'discord.js';
 
 class LikesController extends Controller {
   likes: IListener = {
     socket: SocketEndPoint.MESSAGE,
 
-    function: ({ message }) => {
-      if (!message || !this.isCallingBotCommand(message, 'likes')) {
+    function: message => {
+      if (
+        !message ||
+        !(message instanceof Message) ||
+        !this.isCallingBotCommand(message, 'likes')
+      )
         return;
-      }
 
       const taggedUser = message?.mentions.users.first();
       var user = 'Ciro Gomes';

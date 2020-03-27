@@ -12,8 +12,8 @@ const listeners: IListener[] = [
   GameController.createGame,
   GameController.enterGame,
   LikesController.likes,
-  ReactionController.reaction
-  // TurnController.playCard
+  ReactionController.reaction,
+  TurnController.playCard
 ];
 
 export default listeners;

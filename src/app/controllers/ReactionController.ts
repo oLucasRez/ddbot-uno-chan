@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { MessageEmbed, Message } from 'discord.js';
 
 import Controller from '../../ts/abstract/Controller';
 
@@ -17,10 +17,13 @@ class ReactionController extends Controller {
   reaction: IListener = {
     socket: SocketEndPoint.MESSAGE,
 
-    function: async ({ message }) => {
-      if (!message || !this.isCallingBotCommand(message, 'react')) {
+    function: async message => {
+      if (
+        !message ||
+        !(message instanceof Message) ||
+        !this.isCallingBotCommand(message, 'react')
+      )
         return;
-      }
 
       try {
         const results = await googleImages.search('baka', { pages: 1 });
