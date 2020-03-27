@@ -3,8 +3,8 @@ import { IListener } from './ts/interface/IListener';
 import GreetingsController from './app/controllers/GreetingsController';
 import GameController from './app/controllers/GameController';
 import LikesController from './app/controllers/LikesController';
-// import CardController from './app/controllers/CardController';
 import ReactionController from './app/controllers/ReactionController';
+import TurnController from './app/controllers/TurnController';
 
 const listeners: IListener[] = [
   GreetingsController.helloToServer,
@@ -12,8 +12,8 @@ const listeners: IListener[] = [
   GameController.createGame,
   GameController.enterGame,
   LikesController.likes,
-  // CardController.card,
   ReactionController.reaction
+  // TurnController.playCard
 ];
 
 export default listeners;

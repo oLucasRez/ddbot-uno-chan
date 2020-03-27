@@ -17,7 +17,7 @@ class ReactionController extends Controller {
   reaction: IListener = {
     socket: SocketEndPoint.MESSAGE,
 
-    function: async message => {
+    function: async ({ message }) => {
       if (!message || !this.isCallingBotCommand(message, 'react')) {
         return;
       }

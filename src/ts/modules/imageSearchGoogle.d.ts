@@ -1,1 +1,1 @@
-declare module 'image-search-google
+declare module 'image-search-google';

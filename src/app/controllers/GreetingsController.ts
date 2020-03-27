@@ -11,7 +11,7 @@ class GreetingsController extends Controller {
   sayHello: IListener = {
     socket: SocketEndPoint.MESSAGE,
 
-    function: message => {
+    function: ({ message }) => {
       if (!message || !this.isCallingBotCommand(message, 'konichiwa')) {
         return;
       }

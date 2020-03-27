@@ -1,4 +1,4 @@
-import { Message, Client, User } from 'discord.js';
+import { User, Client, Message } from 'discord.js';
 
 import Controller from '../../ts/abstract/Controller';
 
@@ -16,12 +16,13 @@ import { IPlayer } from '../../ts/interface/IPlayer';
 
 import { SocketEndPoint } from '../../ts/enum/SocketEndPoint';
 import { Response } from '../../ts/enum/Response';
+import TableHelper from '../helpers/TableHelper';
 
 class GameController extends Controller {
   createGame: IListener = {
     socket: SocketEndPoint.MESSAGE,
 
-    function: async message => {
+    function: async ({ message }) => {
       if (!message || !this.isCallingBotCommand(message, 'create')) return;
 
       const { author } = message;
@@ -51,7 +52,13 @@ class GameController extends Controller {
               `in channel ${channelId}!`
           );
 
-          this._initializeUserInGame(author, gameDocument, name);
+          this._initializeUserInGame(
+            author,
+            channelId,
+            gameDocument,
+            name,
+            message.client
+          );
         })
         .catch(() => {
           Logger.serverError(
@@ -65,7 +72,7 @@ class GameController extends Controller {
   enterGame: IListener = {
     socket: SocketEndPoint.MESSAGE,
 
-    function: async message => {
+    function: async ({ message }) => {
       if (!message || !this.isCallingBotCommand(message, 'enter')) return;
 
       const { author } = message;
@@ -80,14 +87,16 @@ class GameController extends Controller {
 
       const name = message.member?.nickname ?? message.author.username;
 
-      this._initializeUserInGame(author, game, name);
+      this._initializeUserInGame(author, channelId, game, name, message.client);
     }
   };
 
   private async _initializeUserInGame(
     user: User,
+    channelId: string,
     game: IGameDocument,
-    name: string
+    name: string,
+    client: Client
   ) {
     const player = PlayerHelper.createEmptyPlayer(user.id);
 
@@ -114,8 +123,21 @@ class GameController extends Controller {
         const newSent = await HandHelper.showHand(player, user, handImages);
 
         PlayerHelper.updatePlayerSentMessages(player, newSent);
+
+        this._sendTable(client, channelId, user);
         break;
     }
+  }
+
+  private async _sendTable(client: Client, gameID: string, user: User) {
+    const game = await GameHelper.getGame(gameID);
+    if (!game) return;
+    const playerTurn = await PlayerHelper.getUser(
+      client,
+      game.players[game.playerTurn].id
+    );
+    const attachment = (await CardHelper.loadHand(game.table))[0];
+    TableHelper.sendTable(user, playerTurn.username, game, attachment);
   }
 
   private async _putPlayerInGame(player: IPlayer, game: IGameDocument) {

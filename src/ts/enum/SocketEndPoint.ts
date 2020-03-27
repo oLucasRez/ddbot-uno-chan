@@ -1,4 +1,5 @@
 export enum SocketEndPoint {
   MESSAGE = 'message',
-  READY = 'ready'
+  READY = 'ready',
+  REACTION = 'messageReactionAdd'
 }

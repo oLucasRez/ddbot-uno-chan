@@ -1,5 +1,5 @@
 import { Suffix } from './ts/enum/Suffix';
-import { Message, User, Channel, DMChannel, TextChannel } from 'discord.js';
+import { User, DMChannel, TextChannel } from 'discord.js';
 import { IEmbed } from './ts/interface/IEmbed';
 import { EmbedColor } from './ts/enum/EmbedColor';
 

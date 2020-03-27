@@ -8,7 +8,7 @@ class LikesController extends Controller {
   likes: IListener = {
     socket: SocketEndPoint.MESSAGE,
 
-    function: message => {
+    function: ({ message }) => {
       if (!message || !this.isCallingBotCommand(message, 'likes')) {
         return;
       }
