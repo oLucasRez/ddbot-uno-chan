@@ -10,6 +10,16 @@ class GameHelper {
     return await Game.findOne({ channelId }).exec();
   }
 
+  public static async getGameByUserId(userId: string) {
+    var game = Game.findOne({
+      players: {
+        $elemMatch: { id: userId }
+      }
+    });
+
+    return await game.exec();
+  }
+
   public static async createGame(game: IGame): Promise<IGameDocument> {
     return Game.create(game);
   }
