@@ -10,7 +10,9 @@ class GameHelper {
     return await Game.findOne({ channelId }).exec();
   }
 
-  public static async getGameByUserId(userId: string) {
+  public static async getGameByUserId(
+    userId: string
+  ): Promise<IGameDocument | null> {
     var game = Game.findOne({
       players: {
         $elemMatch: { id: userId }
