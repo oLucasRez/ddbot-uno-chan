@@ -1,7 +1,0 @@
-export enum EmbedColor {
-  BLACK = 2038813,
-  BLUE = 25261,
-  YELLOW = 13213467,
-  RED = 15868163,
-  GREEN = 4165377
-}
